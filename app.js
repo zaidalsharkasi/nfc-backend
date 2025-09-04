@@ -61,6 +61,7 @@ const socialMediaRouter = require('./routes/socialMedia');
 const countryRouter = require('./routes/countries');
 const cityRouter = require('./routes/cities');
 const addonsRouter = require('./routes/addons');
+const headerImageRouter = require('./routes/headerImage');
 const AppError = require('./utils/apiError');
 const globalErrorHandler = require('./controllers/error.controller');
 const rateLimit = require('express-rate-limit');
@@ -122,7 +123,7 @@ app.use('/api/v1/social-media', socialMediaRouter);
 app.use('/api/v1/countries', countryRouter);
 app.use('/api/v1/cities', cityRouter);
 app.use('/api/v1/addons', addonsRouter);
-
+app.use('/api/v1/header-image', headerImageRouter);
 app.all('*', (req, res, next) => {
   // res.status(404).json({
   //   status: 'faild',

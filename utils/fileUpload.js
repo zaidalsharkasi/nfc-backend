@@ -13,6 +13,7 @@ if (!fs.existsSync(uploadsDir)) {
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     let uploadPath = uploadsDir;
+    console.log('uploadPath..', uploadPath);
     // Determine subdirectory based on fieldname
     if (file.fieldname === 'images' || file.fieldname === 'image') {
       uploadPath = path.join(uploadsDir, 'images');
@@ -24,6 +25,8 @@ const storage = multer.diskStorage({
       uploadPath = path.join(uploadsDir, 'despositeTransactionImg');
     } else if (file.fieldname === 'addonImages') {
       uploadPath = path.join(uploadsDir, 'addonImages');
+    } else if (file.fieldname === 'image') {
+      uploadPath = path.join(uploadsDir, 'image');
     } else {
       uploadPath = path.join(uploadsDir, 'general');
     }
@@ -186,6 +189,7 @@ module.exports = {
   uploadCompanyLogo: uploadImage.single('companyLogo'),
   uploadAddonImages: uploadImage.array('addonImages', 10),
   uploadMultipleImages: uploadImage.array('images', 10),
+  singleImage: uploadImage.single('image'),
   // New flexible upload system
   ...flexibleUploads,
 };
