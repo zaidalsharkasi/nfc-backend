@@ -98,9 +98,9 @@ exports.createProduct = catchAsync(async (req, res) => {
 // Update product
 exports.updateProduct = catchAsync(async (req, res, next) => {
   // If new images are uploaded, merge with existing images
-  console.log('req.body ', req.body);
+  // console.log('req.body ', req.body);
   const existingProduct = await Product.findById(req.params.id);
-  console.log('existingProduct ', existingProduct);
+  // console.log('existingProduct ', existingProduct);
   // if (req.body.images && req.body.images.length > 0) {
   //   if (existingProduct && existingProduct.images.length > 0) {
   //     // Merge new images with existing ones, avoiding duplicates

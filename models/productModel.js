@@ -65,7 +65,11 @@ const ProductSchema = new mongoose.Schema(
 
           required: [true, 'Card color is required'],
         },
-
+        colorName: {
+          type: String,
+          required: [true, 'Card color name is required'],
+          trim: true,
+        },
         image: {
           type: mongoose.Schema.Types.Mixed,
         },

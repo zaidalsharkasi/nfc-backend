@@ -5,11 +5,12 @@ const {
   getAddons,
   createAddon,
   updateAddon,
+  deleteAddon,
 } = require('../controllers/addons.conroller');
 
 const router = express.Router();
 
 router.route('/').get(getAddons).post(protect, createAddon);
-router.route('/:id').get(getAddons).patch(updateAddon);
+router.route('/:id').get(getAddons).patch(updateAddon).delete(deleteAddon);
 
 module.exports = router;

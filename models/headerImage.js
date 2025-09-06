@@ -5,6 +5,10 @@ const HeaderImageSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Image is required'],
   },
+  description: {
+    type: String,
+    required: [true, 'Description is required'],
+  },
 });
 
 module.exports = mongoose.model('HeaderImage', HeaderImageSchema);

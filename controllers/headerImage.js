@@ -2,7 +2,7 @@ const HeaderImage = require('../models/headerImage');
 const handlerFactory = require('./handlerFactory');
 const { getRelativeFilePath } = require('../utils/fileUpload');
 const catchAsync = require('../utils/catchAsync');
-exports.getHeaderImage = handlerFactory.getOne(HeaderImage);
+exports.getHeaderImage = handlerFactory.getAll(HeaderImage);
 exports.createHeaderImage = catchAsync(async (req, res) => {
   //   console.log('req.file..', req.file);
   if (req.file) {

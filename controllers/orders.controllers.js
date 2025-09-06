@@ -27,6 +27,8 @@ const AddonModel = require('../models/AddonModel');
 exports.getAllOrders = factory.getAll(Order, [
   { path: 'product', select: 'title price cardDesigns' },
   { path: 'addons.addon' },
+  { path: 'deliveryInfo.country', select: 'name code' },
+  { path: 'deliveryInfo.city', select: 'name deliveryFee' },
 ]);
 
 // Create new NFC card order
@@ -53,11 +55,12 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     );
   }
 
-  req?.body?.addons.map((addon) => {
+  req?.body?.addons?.map((addon) => {
     if (addon?.inputType === 'image') {
       addon.addonValue = getRelativeFilePath(req.files.addonImages[0]);
     }
   });
+
   // console.log('req.body,,, before deleviry validation', req.body);
   // Validate required fields
   const requiredFieldsError = validateRequiredFields(req.body);
@@ -74,19 +77,23 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   // Process file uploads
   // processOrderFiles(req.files.companyLogo, req.body);
 
+  console.log('req.body?.deliveryInfo?.city...', req?.body);
   const city = await City.findById(req.body?.deliveryInfo?.city);
-
+  console.log('city...', city);
   if (!city) {
     return next(new AppError('City is not exist '));
   }
   // console.log('city...', city?.deliveryFee);
   // Calculate pricing
-  const addons = await Promise.all(
-    req?.body?.addons?.map(async (addon) => {
-      const addonDetails = await AddonModel.findById(addon.addon);
-      return addonDetails;
-    })
-  );
+  const addons =
+    req?.body?.addons?.length > 0
+      ? await Promise.all(
+          req?.body?.addons?.map(async (addon) => {
+            const addonDetails = await AddonModel.findById(addon.addon);
+            return addonDetails;
+          })
+        )
+      : [];
   // console.log('addons...', addons);
   const { total, logoSurcharge, finalTotal } = calculateOrderTotal(
     product.price,
@@ -181,7 +188,7 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
     }
   );
 
-  console.log('order..', order);
+  // console.log('order..', order);
 
   // Populate the updated order
   await order.populate(getOrderPopulationOptions());

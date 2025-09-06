@@ -13,7 +13,7 @@ if (!fs.existsSync(uploadsDir)) {
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     let uploadPath = uploadsDir;
-    console.log('uploadPath..', uploadPath);
+    // console.log('uploadPath..', uploadPath);
     // Determine subdirectory based on fieldname
     if (file.fieldname === 'images' || file.fieldname === 'image') {
       uploadPath = path.join(uploadsDir, 'images');

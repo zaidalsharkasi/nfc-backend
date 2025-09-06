@@ -142,8 +142,8 @@ const getValidCountries = async () => {
 // Middleware to parse FormData into nested objects
 const parseFormData = (req, res, next) => {
   console.log('Raw request body:', req.body);
-  console.log('Content-Type:', req.headers['content-type']);
-  console.log('Files:', req.file || req.files);
+  // console.log('Content-Type:', req.headers['content-type']);
+  // console.log('Files:', req.file || req.files);
   // Initialize the nested objects
   const parsedBody = {
     personalInfo: {},
@@ -154,12 +154,18 @@ const parseFormData = (req, res, next) => {
   // Parse all keys and organize them into nested objects
   for (const key in req.body) {
     if (key.startsWith('personalInfo[')) {
-      const nestedKey = key.replace('personalInfo[', '').replace(']', '');
+      // Extract the nested key by removing 'personalInfo[' from start and ']' from end, then trim whitespace
+      const nestedKey = key
+        .replace(/^personalInfo\[/, '')
+        .replace(/\]\s*$/, '')
+        .trim();
 
       if (nestedKey.includes('[') && nestedKey.includes(']')) {
         // Handle arrays like phoneNumbers[0]
         const arrayKey = nestedKey.split('[')[0];
-        const arrayIndex = parseInt(nestedKey.split('[')[1].replace(']', ''));
+        const arrayIndex = parseInt(
+          nestedKey.split('[')[1].replace(/\]\s*$/, '')
+        );
         if (!parsedBody.personalInfo[arrayKey])
           parsedBody.personalInfo[arrayKey] = [];
         parsedBody.personalInfo[arrayKey][arrayIndex] = req.body[key];
@@ -167,21 +173,37 @@ const parseFormData = (req, res, next) => {
         parsedBody.personalInfo[nestedKey] = req.body[key];
       }
     } else if (key.startsWith('cardDesign[')) {
-      const nestedKey = key.replace('cardDesign[', '').replace(']', '');
+      // Extract the nested key by removing 'cardDesign[' from start and ']' from end, then trim whitespace
+      const nestedKey = key
+        .replace(/^cardDesign\[/, '')
+        .replace(/\]\s*$/, '')
+        .trim();
       parsedBody.cardDesign[nestedKey] = req.body[key];
     } else if (key.startsWith('deliveryInfo[')) {
-      const nestedKey = key.replace('deliveryInfo[', '').replace(']', '');
+      // Extract the nested key by removing 'deliveryInfo[' from start and ']' from end, then trim whitespace
+      const nestedKey = key
+        .replace(/^deliveryInfo\[/, '')
+        .replace(/\]\s*$/, '')
+        .trim();
       parsedBody.deliveryInfo[nestedKey] = req.body[key];
     }
   }
 
   // Only add nested objects if they have properties
   if (Object.keys(parsedBody.personalInfo).length > 0) {
-    req.body.personalInfo = parsedBody.personalInfo;
+    // Merge parsed personal info with existing personal info instead of overwriting
+    req.body.personalInfo = {
+      ...req.body.personalInfo,
+      ...parsedBody.personalInfo,
+    };
   }
 
   if (Object.keys(parsedBody.cardDesign).length > 0) {
-    req.body.cardDesign = parsedBody.cardDesign;
+    // Merge parsed card design with existing card design instead of overwriting
+    req.body.cardDesign = {
+      ...req.body.cardDesign,
+      ...parsedBody.cardDesign,
+    };
 
     // Convert string boolean to actual boolean
     if (req.body.cardDesign.includePrintedLogo !== undefined) {
@@ -189,20 +211,14 @@ const parseFormData = (req, res, next) => {
         req.body.cardDesign.includePrintedLogo === 'true' ||
         req.body.cardDesign.includePrintedLogo === true;
     }
-
-    // Handle color - convert hex to name if needed
-    if (req.body.cardDesign.color) {
-      const color = req.body.cardDesign.color.toLowerCase();
-      if (color === '#000' || color === '#000000' || color === 'black') {
-        req.body.cardDesign.color = 'black';
-      } else if (color === '#fff' || color === '#ffffff' || color === 'white') {
-        req.body.cardDesign.color = 'white';
-      }
-    }
   }
 
   if (Object.keys(parsedBody.deliveryInfo).length > 0) {
-    req.body.deliveryInfo = parsedBody.deliveryInfo;
+    // Merge parsed delivery info with existing delivery info instead of overwriting
+    req.body.deliveryInfo = {
+      ...req.body.deliveryInfo,
+      ...parsedBody.deliveryInfo,
+    };
 
     // Convert string boolean to actual boolean
     if (req.body.deliveryInfo.useSameContact !== undefined) {

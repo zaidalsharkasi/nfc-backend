@@ -17,7 +17,7 @@ const calculateOrderTotal = (
   console.log('addons in calc total...', addons);
   const surcharge = includePrintedLogo ? logoSurcharge : 0;
   const delivery = deliveryFee ?? 0;
-  const addonsTotal = addons.reduce(
+  const addonsTotal = addons?.reduce(
     (sum, addon) => sum + (addon.price || 0),
     0
   );

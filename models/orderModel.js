@@ -81,9 +81,14 @@ const OrderSchema = new mongoose.Schema(
       },
       color: {
         type: String,
-
         required: [true, 'Card color is required'],
       },
+      colorName: {
+        type: String,
+        required: [true, 'Card color name is required'],
+        trim: true,
+      },
+
       includePrintedLogo: {
         type: Boolean,
         default: false,
@@ -121,6 +126,12 @@ const OrderSchema = new mongoose.Schema(
         type: mongoose.Schema.ObjectId,
         ref: 'City',
         required: [true, 'City reference is required'],
+      },
+      typedCountry: {
+        type: String,
+      },
+      typedCity: {
+        type: String,
       },
       addressLine1: {
         type: String,
