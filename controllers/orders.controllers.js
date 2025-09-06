@@ -134,23 +134,28 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 // Update order
 exports.updateOrder = catchAsync(async (req, res, next) => {
   // Get current order for validation
+  // console.log('req.body...', req.body);
   const existingOrder = await Order.findById(req.params.id);
   if (!existingOrder) {
     return next(new AppError('No order found with that ID', 404));
   }
 
-  if (req.files && req.files.addonImages && req.files.addonImages.length > 0) {
+  if (
+    req?.files &&
+    req?.files?.addonImages &&
+    req?.files?.addonImages?.length > 0
+  ) {
     req.body.addonImages = req.files.addonImages.map((file) =>
       getRelativeFilePath(file)
     );
   }
-  if (req.files && req.files.companyLogo[0]) {
+  if (req?.files && req?.files?.companyLogo?.[0]) {
     req.body.cardDesign.companyLogo = getRelativeFilePath(
       req.files.companyLogo[0]
     );
   }
   // console.log('req.files', req.files);
-  if (req.files && req.files.despositeTransactionImg[0]) {
+  if (req?.files && req?.files?.despositeTransactionImg?.[0]) {
     req.body.despositeTransactionImg = getRelativeFilePath(
       req.files.despositeTransactionImg[0]
     );
@@ -158,8 +163,8 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
 
   // Validate company logo
   const logoError = validateCompanyLogo(
-    req.body.cardDesign,
-    req.files.companyLogo[0],
+    req?.body?.cardDesign,
+    req?.files?.companyLogo?.[0],
     existingOrder
   );
   if (logoError) {
@@ -169,18 +174,18 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
   // Validate delivery info
 
   // Build update object
-  const updateData = buildOrderUpdateObject(req.body);
+  const updateData = buildOrderUpdateObject(req?.body);
 
   // Add uploaded file paths to update data
 
   // Check if there's actually something to update
-  if (Object.keys(updateData).length === 0) {
+  if (Object.keys(updateData)?.length === 0) {
     return next(new AppError('No valid fields provided for update', 400));
   }
 
   // Update the order
   const order = await Order.findByIdAndUpdate(
-    req.params.id,
+    req?.params?.id,
     { $set: updateData },
     {
       new: true,
@@ -200,6 +205,7 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
 
 // Update order status with automatic date tracking
 exports.updateOrderStatus = catchAsync(async (req, res, next) => {
+  console.log('req.body...', req.body);
   const { status, notes } = req.body;
 
   if (!status) {

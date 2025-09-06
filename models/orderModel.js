@@ -188,18 +188,7 @@ const OrderSchema = new mongoose.Schema(
     // Order Details
     status: {
       type: String,
-      enum: {
-        values: [
-          'pending',
-          'confirmed',
-          'processing',
-          'printed',
-          'shipped',
-          'delivered',
-          'cancelled',
-          'refunded',
-        ],
-      },
+
       default: 'pending',
     },
 

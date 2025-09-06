@@ -65,6 +65,7 @@ const buildOrderUpdateObject = (requestBody, allowedFields = []) => {
     requestBody;
   const updateData = {};
 
+  if (requestBody.status) updateData.status = requestBody.status;
   // Handle personalInfo fields individually
   if (personalInfo) {
     if (personalInfo.firstName)
