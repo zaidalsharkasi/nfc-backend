@@ -101,16 +101,16 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
   // console.log('req.body ', req.body);
   const existingProduct = await Product.findById(req.params.id);
   // console.log('existingProduct ', existingProduct);
-  // if (req.body.images && req.body.images.length > 0) {
-  //   if (existingProduct && existingProduct.images.length > 0) {
-  //     // Merge new images with existing ones, avoiding duplicates
-  //     const existingImages = existingProduct.images;
-  //     const newImages = req.body.images.filter(
-  //       (img) => !existingImages.includes(img)
-  //     );
-  //     req.body.images = [...existingImages, ...newImages];
-  //   }
-  // }
+  if (req.body.images && req.body.images.length > 0) {
+    if (existingProduct && existingProduct.images.length > 0) {
+      // Merge new images with existing ones, avoiding duplicates
+      const existingImages = existingProduct.images;
+      const newImages = req.body.images.filter(
+        (img) => !existingImages.includes(img)
+      );
+      req.body.images = [...existingImages, ...newImages];
+    }
+  }
 
   const product = await Product.findByIdAndUpdate(
     req.params.id,

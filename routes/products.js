@@ -39,7 +39,9 @@ const processUploadedImages = (req, res, next) => {
 
       req.body.cardDesigns = req.body.cardDesigns.map((cardDesign, index) => ({
         ...cardDesign,
-        image: cardDesign.image ? cardDesign.image : imagePaths[index],
+        image: cardDesign.image
+          ? cardDesign.image
+          : imagePaths[index] || imagePaths[0] || imagePaths[1],
       }));
     } else {
       req.body.images = imagePaths;
